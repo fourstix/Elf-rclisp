@@ -6,7 +6,8 @@
 ; *** without express written permission from the author.         ***
 ; *******************************************************************
 
-include    bios.inc
+#include    ../include/bios.inc
+#include    ../include/ops.inc
 
 errnolist: equ     1
 errnobind: equ     2
@@ -67,7 +68,7 @@ stack:     equ     7effh
 exitaddr:  equ     o_wrmboot
 dta:       equ     7c00h
 dtapage:   equ     07ch
-include    kernel.inc
+#include   kernel.inc
 
            org     8000h
            lbr     0ff00h
@@ -84,8 +85,8 @@ include    kernel.inc
 
 #ifdef ELFOS
            br      start
-include    date.inc
-include    build.inc
+#include   date.inc
+#include   build.inc
            db      'Written by Michael H. Riley',0
 #endif
 
@@ -98,13 +99,15 @@ start:     ldi     high stack          ; set stack to top of 32k
            phi     r2
            ldi     low stack
            plo     r2
-           ldi     0ch                 ; form feed
+
            sep     scall               ; clear the screen
 #ifdef ELFOS
-           dw      o_type
+           dw      o_inmsg
 #else
-           dw      f_type
+           dw      f_inmsg
 #endif
+           db      27,'[2J',0
+          
            ldi     high welcome        ; display welcome message
            phi     rf
            ldi     low welcome
